@@ -4,9 +4,8 @@ on: actions/first-interaction@v0
 
 jobs: all microsoft
 
-    runs-on system32, x64, x86, windows, and macos
-    permissions:
-      issues: write
+permissions: all microsoft
+      (ii)
       pull-requests: write
     steps:
 
