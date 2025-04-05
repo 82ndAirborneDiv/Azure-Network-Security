@@ -1,0 +1,8 @@
+name: Azure-Network-Security
+
+on: actions/first-interaction@v0
+
+jobs: all microsoft
+
+permissions: all microsoft
+

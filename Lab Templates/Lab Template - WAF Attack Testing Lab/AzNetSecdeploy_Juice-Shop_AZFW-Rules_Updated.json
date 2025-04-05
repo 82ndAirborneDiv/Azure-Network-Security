@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "DefaultUserName": {
@@ -110,7 +110,7 @@
     "NIC-Name2Ipaddress": "10.0.27.68",
     "NIC-Name3Ipaddress": "10.0.28.4",
     "DDoSPlanName": "SOCNSDDOSPLAN",
-    "VM-Name1": "VM-Win10",
+    "VM-Name1": "VM-Win11",
     "VM-Name2": "VM-Kali",
     "VM-Name3": "VM-Win2019",
     "workspaceid": "[concat('/subscriptions/',parameters('DiagnosticsWorkspaceSubscription'),'/resourcegroups/', parameters('DiagnosticsWorkspaceResourceGroup'), '/providers/Microsoft.OperationalInsights/workspaces/',parameters('DiagnosticsWorkspaceName'))]"
@@ -1158,23 +1158,30 @@
           "exclusions": [],
           "managedRuleSets": [
             {
-              "ruleSetType": "OWASP",
-              "ruleSetVersion": "3.1",
+              "ruleSetType": "Microsoft_DefaultRuleSet",
+              "ruleSetVersion": "2.1",
               "ruleGroupOverrides": [
                 {
-                  "ruleGroupName": "REQUEST-920-PROTOCOL-ENFORCEMENT",
+                  "ruleGroupName": "PROTOCOL-ENFORCEMENT",
                   "rules": [
                     {
                       "ruleId": "920350",
-                      "state": "Disabled"
+                      "state": "Disabled",
+                      "action": "AnomalyScoring"
                     },
                     {
                       "ruleId": "920320",
-                      "state": "Disabled"
+                      "state": "Disabled",
+                      "action": "AnomalyScoring"
                     }
                   ]
                 }
               ]
+            },
+            {
+              "ruleSetType": "Microsoft_BotManagerRuleSet",
+              "ruleSetVersion": "1.0",
+              "ruleGroupOverrides": []
             }
           ]
         }
@@ -1674,7 +1681,7 @@
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "Standard_B2s"
+          "vmSize": "Standard_D2s_v3"
         },
         "storageProfile": {
           "osDisk": {
@@ -1686,8 +1693,8 @@
           },
           "imageReference": {
             "publisher": "MicrosoftWindowsDesktop",
-            "offer": "Windows-10",
-            "sku": "rs5-pro",
+            "offer": "Windows-11",
+            "sku": "win11-21h2-pro",
             "version": "latest"
           }
         },
@@ -1718,13 +1725,13 @@
         "[concat('Microsoft.Network/networkInterfaces/', variables('NIC-Name2'))]"
       ],
       "plan": {
-        "name": "kali",
+        "name": "kali-2023-3",
         "publisher": "kali-linux",
-        "product": "kali-linux"
+        "product": "kali" 
       },
       "properties": {
         "hardwareProfile": {
-          "vmSize": "Standard_B2s"
+          "vmSize": "Standard_D2s_v3"
         },
         "storageProfile": {
           "osDisk": {
@@ -1736,9 +1743,9 @@
           },
           "imageReference": {
             "publisher": "kali-linux",
-            "offer": "kali-linux",
-            "sku": "kali",
-            "version": "2019.2.0"
+            "offer": "kali",
+            "sku": "kali-2023-3",
+            "version": "2023.3.0"
           }
         },
         "networkProfile": {
@@ -1765,7 +1772,7 @@
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "Standard_B2s"
+          "vmSize": "Standard_D2s_v3"
         },
         "storageProfile": {
           "osDisk": {

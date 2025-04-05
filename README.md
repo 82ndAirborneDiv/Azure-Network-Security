@@ -1,4 +1,14 @@
-# Azure Network Security Samples
+# Azure Network Security 
+
+
+![GitHub](https://img.shields.io/github/license/Azure/Azure-Network-Security?style=plastic)
+![GitHub contributors](https://img.shields.io/github/contributors/azure/Azure-Network-Security?color=white&logo=Microsoft%20azure&logoColor=blue&style=plastic)
+![GitHub last commit](https://img.shields.io/github/last-commit/azure/Azure-Network-Security)
+![GitHub issues](https://img.shields.io/github/issues-raw/azure/Azure-Network-Security)
+![GitHub repo size](https://img.shields.io/github/repo-size/azure/Azure-Network-Security?color=white&logo=Microsoft%20azure&logoColor=blue)
+
+
+
 
 Welcome to the Azure Network Security community repository. This repo is designed to help:
 - Deploy Azure NetSec resources programmatically using scripts and templates.
@@ -14,6 +24,16 @@ Welcome to the Azure Network Security community repository. This repo is designe
 - [Azure WAF Docs](https://docs.microsoft.com/en-us/azure/web-application-firewall/)
 - [Azure DDoS Protection Docs](https://docs.microsoft.com/en-us/azure/virtual-network/ddos-protection-overview)
 - [Azure Networking Feedback](https://feedback.azure.com/forums/217313-networking)
+- [Technical Community Blog](https://techcommunity.microsoft.com/t5/azure-network-security-blog/bg-p/AzureNetworkSecurityBlog)
+
+# What's new?
+Please find the latest artifacts in this repo on our [What's New Page](https://github.com/Azure/Azure-Network-Security/wiki/What's-New)  
+
+# Support
+All automations within this repository are provided as is, without SLA or official support. However, if you have an issue please fill out a [bug report](https://github.com/Azure/Azure-Network-Security/issues/new?assignees=&labels=&template=bug_report.md&title=) and reference the automation artifact, so the community can try to solve it.
+
+# Wiki
+This project has its own [Wiki](https://github.com/Azure/Azure-Network-Security/wiki) which will provide you with further information about the Azure Network Security community, how to contribute, templates to use and other resources.
 
 # Contributing
 
@@ -47,4 +67,4 @@ provided by the bot. You will only need to do this once across all repos using o
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.  

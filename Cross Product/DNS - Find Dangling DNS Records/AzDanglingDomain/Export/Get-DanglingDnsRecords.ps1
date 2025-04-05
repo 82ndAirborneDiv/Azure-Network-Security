@@ -117,7 +117,7 @@ Function Get-AZResourcesList {
 
     $AzResources = [System.Collections.ArrayList ]::new()
 
-    $numberOfResources = (Search-AzGraph -Query $( -join ($query, ' | count'))).Count
+    $numberOfResources = (Search-AzGraph -Query $( -join ($query, ' |  summarize TotalResources=count()'))).TotalResources
     $maxRecords = 1000
     $skipRecords = 0
     Do {
@@ -141,7 +141,12 @@ Function Get-AZResourcesHash {
     $ProgessActivity = "Fetching resources"
     $percentage = 0
     Write-Progress $ProgessActivity -Status "$percentage precentage Complete:" -PercentComplete $percentage
-    $numberOfResources = (Search-AzGraph -Query $( -join ($query, ' | count'))).Count
+    $AzResourcesList = Search-AzGraph -Query $( -join ($query, ' |  summarize TotalResources=count()'))
+    if(($null -ne $AzResourcesList) -and   ($null -ne $AzResourcesList.Data))
+    {
+            $AzResourcesList = $AzResourcesList.Data
+    }
+    $numberOfResources =  $AzResourcesList.TotalResources
     $maxRecords = 1000
     $skipRecords = 0
     Do {
@@ -150,12 +155,15 @@ Function Get-AZResourcesHash {
         Write-Progress $ProgessActivity -Status "$($percentage.ToString('P')) Complete ($skipRecords/$numberOfResources):" -PercentComplete ($percentage*100)
 
         $Resources = Get-AZResources -startId $maxRecords -endId $skipRecords -query $query
+        if ($Resources.Data -is [System.Collections.Generic.IList[psobject]]) {$Resources = $Resources.Data}
     
         $Resources |  ForEach-Object `
         { 
             $key = $psitem.$keyName.trim(" ").tolower()
             If ($AzResources.ContainsKey($key)) {
-                $AzResources[$key] += $psitem
+                $recordList = $AzResources[$key]
+                $recordList.add($psitem) | Out-Null
+                $AzResources[$key] = $recordList
             }
             else {
                 $recordList = [System.Collections.ArrayList]::new()
@@ -307,7 +315,7 @@ Function Get-AZResourcesListForWorkFlow {
     }
     $AzResourcesList = [System.Collections.ArrayList ]::new()
     
-    $numberOfResources = (Search-AzGraph -Query $( -join ($query, ' | count'))).Count
+    $numberOfResources = (Search-AzGraph -Query $( -join ($query, ' |  summarize TotalResources=count()'))).TotalResources
     $maxRecords = 1000
     $skipRecords = 0
     Do {
@@ -496,11 +504,11 @@ Function Process-CNameList {
         Write-Progress -Activity "$ActivityMessage" -Status "$($status.ToString('P')) Complete:" -PercentComplete ($status*100)
           
         If ($item.FQDN) {
-            $key = $item.Fqdn.trim(" ").tolower()
+            $key = $item.Fqdn.trim(" ").TrimEnd('.').tolower()
 
             #Azurefd can have subdomains also which we cannot mark as dangled
             if ($item.FQDN -match "azurefd.net") {
-                $count = (($AzResourcesHash.GetEnumerator() | Where { $item.FQDN -match "." + $_.key }) | Measure-Object).Count
+                $count = (($AzResourcesHash.GetEnumerator() | Where { $item.FQDN -match  '$_.key' }) | Measure-Object).Count
                 if ($count -gt 0) {
                     [void]$AzCNameMatchingResources.add($item)
                 }
@@ -746,7 +754,7 @@ Function Get-DanglingDnsRecords {
 
         if ($null -eq $inputCNameList) {
             Write-Warning "No Records found in input file, please check the file.."
-            exit
+            return
         }
         else {
             Add-ResourceProvider $inputCNameList
@@ -817,6 +825,7 @@ Function Get-DanglingDnsRecords {
     | where type in ('microsoft.network/frontdoors',
     'microsoft.storage/storageaccounts',
     'microsoft.cdn/profiles/endpoints',
+    'microsoft.cdn/profiles/afdendpoints',
     'microsoft.network/publicipaddresses',
     'microsoft.network/trafficmanagerprofiles',
     'microsoft.containerinstance/containergroups',
@@ -832,6 +841,7 @@ Function Get-DanglingDnsRecords {
        type =~ 'microsoft.storage/storageaccounts', iff(properties['primaryEndpoints']['blob'] matches regex '(?i)(http|https)://',
                 parse_url(tostring(properties['primaryEndpoints']['blob'])).Host, tostring(properties['primaryEndpoints']['blob'])),
        type =~ 'microsoft.cdn/profiles/endpoints', properties.hostName,
+       type =~ 'microsoft.cdn/profiles/afdendpoints', properties.hostName,
        type =~ 'microsoft.network/publicipaddresses', properties.dnsSettings.fqdn,
        type =~ 'microsoft.network/trafficmanagerprofiles', properties.dnsConfig.fqdn,
        type =~ 'microsoft.containerinstance/containergroups', properties.ipAddress.fqdn,
@@ -873,9 +883,11 @@ Function Get-DanglingDnsRecords {
     | project id, tenantId, subscriptionId, type, resourceGroup, name, dnsEndpoint, dnsEndpoints, properties, resourceProvider
     | order by dnsEndpoint asc, name asc, id asc"
 
-    $dnszoneQuery = "resources | where type =~ 'microsoft.network/dnszones'
-             | where subscriptionId matches regex '(?i)$InputSubscriptionIdRegexFilterForAzureResourcesGraph'
-             | where name matches regex '(?i)$inputDnsZoneNameRegexFilter'"
+    $inputDnsZoneNameRegexFilterForSearch =   $inputDnsZoneNameRegexFilter.replace('\','\\')
+    $InputSubscriptionIdRegexFilterForAzureResourcesGraphSearch = $InputSubscriptionIdRegexFilterForAzureResourcesGraph.replace('\','\\')
+    $dnszoneQuery = ("resources | where type =~ 'microsoft.network/dnszones'" +
+             " | where subscriptionId matches regex '(?i)$InputSubscriptionIdRegexFilterForAzureResourcesGraphSearch'"+
+             " | where name matches regex '(?i)$inputDnsZoneNameRegexFilterForSearch'")
 
     # Main
     #

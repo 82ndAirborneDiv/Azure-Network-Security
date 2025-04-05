@@ -1,4 +1,4 @@
-## Tool to generate the dangling domains for a tenant (multiple subscriptions)
+## Tool to generate a list of dangling domains for a tenant (multiple subscriptions)
 
 This tool is to be used by Azure customers to list all domain chains that have a CNAME associated to an existing Azure resource that was created on their subscriptions or tenants. Alternatively, for customers like Contoso, who have the CNAMES in the other DNS services pointing to Azure resources, the customer can provide the CNAMEs in an input file to the tool. You can use this tool by executing this as a PowerShell script.
 
@@ -55,11 +55,13 @@ Follow the link to  getting started document: https://docs.microsoft.com/en-us/a
 
 The tool is published as module at https://www.powershellgallery.com/packages/AzDanglingDomain/ 
 
-1.	Run the follwomg command in Cloud Shell.
+1.	Run the following commands in Cloud Shell.
+  ```powershell
   Install-Module -Name AzDanglingDomain
   Import-Module  -Name AzDanglingDomain
+  ```
 2.	If using a custom zone upload your zone records using the upload button 
-3.	Get-DanglingDnsRecords -InputFileDnsRecords .\zone.csv
+3. ``Get-DanglingDnsRecords -InputFileDnsRecords .\zone.csv``
 
 **Note:** Ignore any warning similar to below as the script updates the modules to latest version.
 
@@ -68,8 +70,10 @@ WARNING: The version '1.9.4' of module 'Az.Accounts' is currently in use. Retry 
 **Steps to use the tool in local machine.**
 
 1. Run the follwomg command in powershell.
+  ```powershell
   Install-Module -Name AzDanglingDomain
   Import-Module  -Name AzDanglingDomain
+  ```
 
 ```powershell
 Get-DanglingDnsRecords
@@ -100,10 +104,6 @@ Filter to run the query against matching subscription Ids, default match all.
 -InputDnsZoneNameRegexFilter 
 
 Filter to run the query against matching DNS zone names, default match all.
-
--InputInterestedDnsZones 
-
-Filter to match the target matching domain zone names, default match all.
 
 -OutputFileLocation 
 
