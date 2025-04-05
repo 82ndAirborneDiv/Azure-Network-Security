@@ -3,7 +3,7 @@ name: Greetings
 on: pull_request
 
 jobs: all microsoft
-  greeting:
+
     runs-on: windows-latest
     permissions:
       issues: write
