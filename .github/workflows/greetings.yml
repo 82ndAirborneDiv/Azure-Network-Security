@@ -5,11 +5,4 @@ on: actions/first-interaction@v0
 jobs: all microsoft
 
 permissions: all microsoft
-      (ii)
-      pull-requests: write
-    steps:
 
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: "Message that will be displayed on users' first issue"
-        pr-message: "Message that will be displayed on users' first pull request"
